@@ -1,0 +1,43 @@
+packit_instances: ["stg"]
+
+downstream_package_name: python-PyGithub
+upstream_package_name: PyGithub
+upstream_project_url: https://github.com/PyGithub/PyGithub
+srpm_build_deps:
+  - wget
+
+actions:
+  post-upstream-clone:
+    - "wget https://src.fedoraproject.org/rpms/python-PyGithub/raw/main/f/python-PyGithub.spec -O python-PyGithub.spec"
+
+jobs:
+  - job: copr_build
+    trigger: pull_request
+    targets:
+      - fedora-rawhide
+    owner: mmassari
+    project: PyGithub
+
+  - job: tests
+    trigger: pull_request
+    targets:
+      - fedora-rawhide
+    identifier: packit
+    fmf_url: "https://github.com/packit/packit"
+    fmf_ref: main
+    tf_extra_params:
+      test:
+        tmt:
+          name: full
+
+  - job: tests
+    trigger: pull_request
+    targets:
+      - fedora-rawhide
+    identifier: ogr
+    fmf_url: "https://github.com/packit/ogr"
+    fmf_ref: main
+    tf_extra_params:
+      test:
+        tmt:
+          name: full
